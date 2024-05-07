@@ -25,20 +25,23 @@ class AmizadesController {
     // Faz o response para o browser
     if (listaAmizades.length === 0)
       res.status(200).json({ message: "Nenhum amizade encontrado" })
-    else
-      res.status(200).json({ amizades: listaAmizades })
+    else {
 
-    let listaAmizadesVerbose = []
-    // Percorre o array listaJogadores
-    for (let amizade of listaAmizades) {
-      // Cria uma nova variável que recebe a versão com os dados principais de jogador
-      let amizadeVerbose = amizade.principal()
-      // Atribui o novo jogador ao novo array
-      listaJogadoresVerbose.push(amizadeVerbose)
+
+      let listaAmizadesVerbose = []
+      // Percorre o array listaJogadores
+      for (let amizade of listaAmizades) {
+        // Cria uma nova variável que recebe a versão com os dados principais de jogador
+        let amizadeVerbose = JSON.parse(JSON.stringify(amizade));
+        for (let i = 0; i < amizade.amigos.length; i++) {
+          amizadeVerbose.amigos[i] = JogadoresDAO.buscarPorId(amizadeVerbose.amigos[i]).principal()
+        }
+        // Atribui o novo jogador ao novo array
+        listaAmizadesVerbose.push(amizadeVerbose)
+      }
+      res.status(200).json({ amizades: listaAmizadesVerbose })
     }
-    res.status(200).json({ amizades: listaAmizadesVerbose })
   }
-
 
   // Mostrar um amizade (READ)
   show(req, res) {
